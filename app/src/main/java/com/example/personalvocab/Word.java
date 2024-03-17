@@ -4,10 +4,10 @@ package com.example.personalvocab;
 import com.google.firebase.Timestamp;
 
 public class Word {
- String soz;
- String kontent;
+    String soz;
+    String kontent;
 
-Timestamp timestamp;
+    Timestamp timestamp;
 
     public Word() {
     }

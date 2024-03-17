@@ -28,16 +28,16 @@ import com.google.firebase.firestore.Query;
 public class MainActivity extends AppCompatActivity {
     FloatingActionButton mAddFab, AddWordFab, mAddPersonFab;
     TextView addAlarmActionText, addPersonActionText;
-RecyclerView recyclerView;
-ImageButton menubtn;
+    RecyclerView recyclerView;
+    ImageButton menubtn;
 
-WordAdapter wordAdapter;
+    WordAdapter wordAdapter;
     Boolean isAllFabsVisible;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
 
         mAddFab = findViewById(R.id.add_fab);
@@ -45,8 +45,8 @@ WordAdapter wordAdapter;
         AddWordFab = findViewById(R.id.add_word_fab);
         mAddPersonFab = findViewById(R.id.add_folder_fab);
 
-recyclerView = findViewById(R.id.recycler_view);
-setupRecyclerView();
+        recyclerView = findViewById(R.id.recycler_view);
+        setupRecyclerView();
 
         // Also register the action name text, of all the FABs.
         addAlarmActionText = findViewById(R.id.add_word_action_text);
@@ -75,7 +75,7 @@ setupRecyclerView();
                 addAlarmActionText.setVisibility(View.VISIBLE);
                 addPersonActionText.setVisibility(View.VISIBLE);
 
-                AddWordFab.setOnClickListener(v -> startActivity(new Intent(MainActivity.this,WordDetails.class) ));
+                AddWordFab.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, WordDetails.class)));
                 // make the boolean variable true as we
                 // have set the sub FABs visibility to GONE
                 isAllFabsVisible = true;
@@ -102,14 +102,14 @@ setupRecyclerView();
 
     }
 
-    void setupRecyclerView(){
+    void setupRecyclerView() {
 
-        Query query = Utility.getCollectionReferenceToWords().orderBy("timestamp",Query.Direction.DESCENDING);
+        Query query = Utility.getCollectionReferenceToWords().orderBy("timestamp", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<Word> options = new FirestoreRecyclerOptions.Builder<Word>()
-                .setQuery(query,Word.class).build();
-recyclerView.setLayoutManager(new LinearLayoutManager(this));
-wordAdapter = new WordAdapter(options,this);
-recyclerView.setAdapter(wordAdapter);
+                .setQuery(query, Word.class).build();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        wordAdapter = new WordAdapter(options, this);
+        recyclerView.setAdapter(wordAdapter);
 
     }
 /*

@@ -15,15 +15,15 @@ import io.grpc.Context;
 public class Utility {
 
 
-static CollectionReference getCollectionReferenceToWords(){
-    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-     return
-             FirebaseFirestore.getInstance()
-                     .collection("words").document(firebaseUser.getUid())
-                     .collection("my_words");
-}
+    static CollectionReference getCollectionReferenceToWords() {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        return
+                FirebaseFirestore.getInstance()
+                        .collection("words").document(firebaseUser.getUid())
+                        .collection("my_words");
+    }
 
-static String timestampToString(Timestamp timestamp){
-return new SimpleDateFormat("MM/dd/yyyy").format(timestamp.toDate());
-}
+    static String timestampToString(Timestamp timestamp) {
+        return new SimpleDateFormat("MM/dd/yyyy").format(timestamp.toDate());
+    }
 }

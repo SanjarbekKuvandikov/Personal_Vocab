@@ -19,10 +19,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class Login extends AppCompatActivity {
-    EditText emailtext,passtext;
+    EditText emailtext, passtext;
     Button login;
     ProgressBar progressBar;
     TextView createacctext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,56 +36,57 @@ public class Login extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         createacctext = findViewById(R.id.createacc_text_btn);
 
-login.setOnClickListener((v)-> loginUsr());
-createacctext.setOnClickListener((v)-> startActivity(new Intent(Login.this,CreateAccount.class)));
+        login.setOnClickListener((v) -> loginUsr());
+        createacctext.setOnClickListener((v) -> startActivity(new Intent(Login.this, CreateAccount.class)));
 
     }
-  void loginUsr(){
-      String email=emailtext.getText().toString();
-      String password = passtext.getText().toString();
-      boolean isvalidate = validateData(email,password);
 
-      if (!isvalidate){
-          return;
-      }
-      loginAccountInFirebase(email,password);
-  }
-  void loginAccountInFirebase(String email,String password){
-      FirebaseAuth firebaseAuth =  FirebaseAuth.getInstance();
-      changeinprogress(true);
-      firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-          @Override
-          public void onComplete(@NonNull Task<AuthResult> task) {
-              changeinprogress(false);
-              if (task.isSuccessful()){
-startActivity(new Intent(Login.this,MainActivity.class));
-finish();
-              }
-              else {
-                  Toast.makeText(Login.this,"Email not verified,Please verify your email.",Toast.LENGTH_SHORT).show();
-              }
+    void loginUsr() {
+        String email = emailtext.getText().toString();
+        String password = passtext.getText().toString();
+        boolean isvalidate = validateData(email, password);
+
+        if (!isvalidate) {
+            return;
+        }
+        loginAccountInFirebase(email, password);
+    }
+
+    void loginAccountInFirebase(String email, String password) {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        changeinprogress(true);
+        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                changeinprogress(false);
+                if (task.isSuccessful()) {
+                    startActivity(new Intent(Login.this, MainActivity.class));
+                    finish();
+                } else {
+                    Toast.makeText(Login.this, "Email not verified,Please verify your email.", Toast.LENGTH_SHORT).show();
+                }
 
 
-          }
-      });
-  }
+            }
+        });
+    }
 
-    void changeinprogress(boolean inProgress){
-        if (inProgress){
+    void changeinprogress(boolean inProgress) {
+        if (inProgress) {
             progressBar.setVisibility(View.VISIBLE);
             login.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             progressBar.setVisibility(View.GONE);
             login.setVisibility(View.VISIBLE);
         }
     }
-    boolean validateData(String email,String password){
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+
+    boolean validateData(String email, String password) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailtext.setError("Email is invalid");
             return false;
         }
-        if (password.length()<6){
+        if (password.length() < 6) {
             passtext.setError("Password length is invalid");
             return false;
         }
