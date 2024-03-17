@@ -3,7 +3,9 @@ package com.example.personalvocab;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -15,8 +17,10 @@ import com.google.firebase.firestore.DocumentReference;
 
 
 public class WordDetails extends AppCompatActivity {
-    EditText titleEdittext, contentEdittext;
-    ImageButton savewordbtn;
+    private EditText titleEdittext, contentEdittext;
+    private ImageButton savewordbtn;
+
+    private Utility utility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +33,7 @@ public class WordDetails extends AppCompatActivity {
 
         savewordbtn.setOnClickListener(v -> saveWord());
 
-
+        utility = Utility.getInstance();
     }
 
     void saveWord() {
@@ -50,14 +54,17 @@ public class WordDetails extends AppCompatActivity {
 
     void saveWordToFirebase(Word word) {
         DocumentReference documentReference;
-        documentReference = Utility.getCollectionReferenceToWords().document();
+        documentReference = utility.getCollectionReferenceToWords().document();
         documentReference.set(word).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
                 if (task.isSuccessful()) {
 
-                    Toast.makeText(WordDetails.this, "So`zlar muaffaqiyatli qo`shildi.", Toast.LENGTH_SHORT).show();
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("result", word);
+                    setResult(RESULT_OK,returnIntent);
+                    finish();
                 } else {
 
                     Toast.makeText(WordDetails.this, "So`zlarni qo`shishda xatolik!", Toast.LENGTH_SHORT).show();

@@ -1,5 +1,7 @@
 package com.example.personalvocab;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +13,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -20,18 +24,25 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
 public class MainActivity extends AppCompatActivity {
-    FloatingActionButton mAddFab, AddWordFab, mAddPersonFab;
-    TextView addAlarmActionText, addPersonActionText;
-    RecyclerView recyclerView;
-    ImageButton menubtn;
+    private static final int REQUEST_CODE = 346;
 
-    WordAdapter wordAdapter;
+
+    private Utility utility;
+    private FloatingActionButton mAddFab, AddWordFab, mAddPersonFab;
+    private TextView addAlarmActionText, addPersonActionText;
+    private RecyclerView recyclerView;
+    private ImageButton menubtn;
+
+    private FirestoreRecyclerAdapter wordAdapter;
     Boolean isAllFabsVisible;
 
     @Override
@@ -46,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         mAddPersonFab = findViewById(R.id.add_folder_fab);
 
         recyclerView = findViewById(R.id.recycler_view);
-        setupRecyclerView();
 
         // Also register the action name text, of all the FABs.
         addAlarmActionText = findViewById(R.id.add_word_action_text);
@@ -75,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 addAlarmActionText.setVisibility(View.VISIBLE);
                 addPersonActionText.setVisibility(View.VISIBLE);
 
-                AddWordFab.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, WordDetails.class)));
+                AddWordFab.setOnClickListener(v -> startActivityForResult(new Intent(MainActivity.this, WordDetails.class), REQUEST_CODE));
                 // make the boolean variable true as we
                 // have set the sub FABs visibility to GONE
                 isAllFabsVisible = true;
@@ -100,19 +110,72 @@ public class MainActivity extends AppCompatActivity {
                 view -> Toast.makeText(MainActivity.this, "Word Added", Toast.LENGTH_SHORT
                 ).show());
 
+        setupRecyclerView();
+        getWordList();
+
     }
 
     void setupRecyclerView() {
-
-        Query query = Utility.getCollectionReferenceToWords().orderBy("timestamp", Query.Direction.DESCENDING);
-        FirestoreRecyclerOptions<Word> options = new FirestoreRecyclerOptions.Builder<Word>()
-                .setQuery(query, Word.class).build();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        wordAdapter = new WordAdapter(options, this);
-        recyclerView.setAdapter(wordAdapter);
-
+        utility = Utility.getInstance();
     }
-/*
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void getWordList(){
+        Query query = utility.getCollectionReferenceToWords().orderBy("timestamp", Query.Direction.DESCENDING);
+
+        FirestoreRecyclerOptions<Word> response = new FirestoreRecyclerOptions.Builder<Word>()
+                .setQuery(query, Word.class)
+                .build();
+
+
+        wordAdapter = new FirestoreRecyclerAdapter<Word, WordViewHolder>(response) {
+            @Override
+            public void onBindViewHolder(WordViewHolder holder, int position, Word word) {
+                if (word != null) {
+                    holder.TitleTextview.setText(word.soz);
+                    holder.ContentTextview.setText(word.kontent);
+                    holder.TimestampTextview.setText(utility.timestampToString(word.timestamp));
+                } else {
+                    // Handle null case gracefully, for example:
+                    holder.TitleTextview.setText("");
+                    holder.ContentTextview.setText("");
+                    holder.TimestampTextview.setText("");
+                }
+            }
+
+            @Override
+            public WordViewHolder onCreateViewHolder(ViewGroup group, int i) {
+                View view = LayoutInflater.from(group.getContext())
+                        .inflate(R.layout.recycler_wor_item, group, false);
+
+                return new WordViewHolder(view);
+            }
+
+            @Override
+            public void onError(FirebaseFirestoreException e) {
+                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT
+                ).show();
+            }
+        };
+
+        wordAdapter.notifyDataSetChanged();
+        recyclerView.setAdapter(wordAdapter);
+    }
+
+    class WordViewHolder extends RecyclerView.ViewHolder {
+
+        TextView TitleTextview, ContentTextview, TimestampTextview;
+
+        public WordViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            TitleTextview = itemView.findViewById(R.id.word_title_text_view);
+            ContentTextview = itemView.findViewById(R.id.word_content_text_view);
+            TimestampTextview = itemView.findViewById(R.id.word_timestamp_text_view);
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -126,10 +189,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        wordAdapter.notifyDataSetChanged();
-    }*/
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK){
+            wordAdapter.notifyDataSetChanged();
+            Toast.makeText(MainActivity.this,"So`zlar muaffaqiyatli qo`shildi.",Toast.LENGTH_SHORT).show();
+        }
+    }
 }
 
 

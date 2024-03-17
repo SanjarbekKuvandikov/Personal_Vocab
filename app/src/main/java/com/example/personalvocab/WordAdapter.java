@@ -1,24 +1,28 @@
+/*
 package com.example.personalvocab;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import io.grpc.Context;
 
 public class WordAdapter extends FirestoreRecyclerAdapter<Word, WordAdapter.WordViewHolder> {
     Context context;
 
 
-    public WordAdapter(@NonNull FirestoreRecyclerOptions<Word> options, MainActivity context) {
+    public WordAdapter(@NonNull FirestoreRecyclerOptions<Word> options, Context context) {
         super(options);
+        this.context = context;
     }
 
     @Override
@@ -51,4 +55,11 @@ public class WordAdapter extends FirestoreRecyclerAdapter<Word, WordAdapter.Word
         }
     }
 
+    @Override
+    public void onError(FirebaseFirestoreException e) {
+        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT
+        ).show();
+    }
+
 }
+*/
