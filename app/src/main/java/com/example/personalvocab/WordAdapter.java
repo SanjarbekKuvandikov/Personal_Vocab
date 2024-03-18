@@ -1,32 +1,35 @@
+/*
 package com.example.personalvocab;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-
-import io.grpc.Context;
-
-public class WordAdapter extends FirestoreRecyclerAdapter<Word,WordAdapter.WordViewHolder> {
-Context context;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 
-    public WordAdapter(@NonNull FirestoreRecyclerOptions<Word> options, MainActivity context) {
+public class WordAdapter extends FirestoreRecyclerAdapter<Word, WordAdapter.WordViewHolder> {
+    Context context;
+
+
+    public WordAdapter(@NonNull FirestoreRecyclerOptions<Word> options, Context context) {
         super(options);
+        this.context = context;
     }
 
     @Override
     protected void onBindViewHolder(@NonNull WordViewHolder holder, int position, @NonNull Word word) {
-holder.TitleTextview.setText(word.soz);
-holder.ContentTextview.setText(word.kontent);
-holder.TimestampTextview.setText(Utility.timestampToString(word.timestamp));
-
+        holder.TitleTextview.setText(word.soz);
+        holder.ContentTextview.setText(word.kontent);
+        holder.TimestampTextview.setText(Utility.timestampToString(word.timestamp));
 
 
     }
@@ -34,14 +37,15 @@ holder.TimestampTextview.setText(Utility.timestampToString(word.timestamp));
     @NonNull
     @Override
     public WordViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_wor_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_wor_item, parent, false);
 
-return  new WordViewHolder(view);
+        return new WordViewHolder(view);
     }
 
-    class WordViewHolder extends RecyclerView.ViewHolder{
+    class WordViewHolder extends RecyclerView.ViewHolder {
 
-        TextView TitleTextview,ContentTextview,TimestampTextview;
+        TextView TitleTextview, ContentTextview, TimestampTextview;
+
         public WordViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -51,4 +55,11 @@ return  new WordViewHolder(view);
         }
     }
 
+    @Override
+    public void onError(FirebaseFirestoreException e) {
+        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT
+        ).show();
+    }
+
 }
+*/

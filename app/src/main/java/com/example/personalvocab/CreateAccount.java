@@ -19,10 +19,11 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class CreateAccount extends AppCompatActivity {
 
-    EditText emailtext,passtext,confpasstext;
+    EditText emailtext, passtext, confpasstext;
     Button createacc;
     ProgressBar progressBar;
     TextView logintext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,66 +36,66 @@ public class CreateAccount extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         logintext = findViewById(R.id.login_text_btn);
 
-        createacc.setOnClickListener(v->createAccoun());
-        logintext.setOnClickListener(v->finish());
+        createacc.setOnClickListener(v -> createAccoun());
+        logintext.setOnClickListener(v -> finish());
 
     }
-    void createAccoun(){
-String email=emailtext.getText().toString();
-String password = passtext.getText().toString();
-String confirmpass = confpasstext.getText().toString();
-boolean isvalidate = validateData(email,password,confirmpass);
 
-if (!isvalidate){
-    return;
-}
-createAccountinFirebase(email,password);
+    void createAccoun() {
+        String email = emailtext.getText().toString();
+        String password = passtext.getText().toString();
+        String confirmpass = confpasstext.getText().toString();
+        boolean isvalidate = validateData(email, password, confirmpass);
+
+        if (!isvalidate) {
+            return;
+        }
+        createAccountinFirebase(email, password);
     }
 
-    void createAccountinFirebase(String email,String password){
-changeinprogress(true);
+    void createAccountinFirebase(String email, String password) {
+        changeinprogress(true);
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-if (task.isSuccessful()){
+                if (task.isSuccessful()) {
 
-    Toast.makeText(CreateAccount.this, "Successfully create account,check your email", Toast.LENGTH_SHORT).show();
-    firebaseAuth.getCurrentUser().sendEmailVerification();
-    firebaseAuth.signOut();
-finish();
-}
-else {
-    Toast.makeText(CreateAccount.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-}
-                
+                    Toast.makeText(CreateAccount.this, "Successfully create account,check your email", Toast.LENGTH_SHORT).show();
+                    firebaseAuth.getCurrentUser().sendEmailVerification();
+                    firebaseAuth.signOut();
+                    finish();
+                } else {
+                    Toast.makeText(CreateAccount.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
 
     }
 
-    void changeinprogress(boolean inProgress){
-        if (inProgress){
+    void changeinprogress(boolean inProgress) {
+        if (inProgress) {
             progressBar.setVisibility(View.VISIBLE);
             createacc.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             progressBar.setVisibility(View.GONE);
             createacc.setVisibility(View.VISIBLE);
         }
     }
-    boolean validateData(String email,String password , String confirmpass){
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+
+    boolean validateData(String email, String password, String confirmpass) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailtext.setError("Email is invalid");
             return false;
         }
-        if (password.length()<6){
+        if (password.length() < 6) {
             passtext.setError("Password length is invalid");
             return false;
         }
-        if (!password.equals(confirmpass)){
+        if (!password.equals(confirmpass)) {
             confpasstext.setError("Password not matched");
             return false;
         }
