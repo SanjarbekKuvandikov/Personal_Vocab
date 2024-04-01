@@ -3,12 +3,15 @@ package com.example.personalvocab;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -16,6 +19,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -28,9 +33,11 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 346;
@@ -49,6 +56,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //firebase messaging
+
+        //firebase messaging
+
+        //Drawer Layout
+        DrawerLayout drawerLayout = findViewById(R.id.drawerlayout);
+        findViewById(R.id.imageMenu).setOnClickListener((v -> {
+drawerLayout.openDrawer(GravityCompat.START);
+        }));
+        //drawer layout
 
 
         mAddFab = findViewById(R.id.add_fab);
@@ -142,6 +159,15 @@ public class MainActivity extends AppCompatActivity {
                     holder.ContentTextview.setText("");
                     holder.TimestampTextview.setText("");
                 }
+holder.itemView.setOnClickListener((v)->{
+    Intent intent = new Intent(MainActivity.this,WordDetails.class);
+    String docId = this.getSnapshots().getSnapshot(position).getId();
+    intent.putExtra("title",word.soz);
+    intent.putExtra("content",word.kontent);
+    intent.putExtra("docId",docId);
+startActivity(intent);
+});
+
             }
 
             @Override
@@ -195,6 +221,33 @@ public class MainActivity extends AppCompatActivity {
             wordAdapter.notifyDataSetChanged();
             Toast.makeText(MainActivity.this,"So`zlar muaffaqiyatli qo`shildi.",Toast.LENGTH_SHORT).show();
         }
+    }
+    //Menu
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.nav_logout){
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(MainActivity.this,Login.class));
+            finish();
+        } else if (item.getItemId() == R.id.nav_share) {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT,"Personal Vocabulary");
+            if (intent.resolveActivity(getPackageManager()) != null){
+                startActivity(intent);
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+
     }
 }
 

@@ -6,7 +6,7 @@
     android:padding="12sp"
     android:layout_marginVertical="8dp"
     android:backgroundTint="@color/white"
-    android:background="@drawable/rounded"
+    android:background="@drawable/red_rounded"
     >
 
 <TextView

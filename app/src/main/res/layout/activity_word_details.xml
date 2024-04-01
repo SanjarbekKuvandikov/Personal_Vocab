@@ -69,5 +69,17 @@ android:padding="16dp"
             />
 
     </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/delete_word_txt"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:text="Delete word"
+        android:visibility="gone"
+        android:textColor="@color/red"
+        />
+
 
 </RelativeLayout>
