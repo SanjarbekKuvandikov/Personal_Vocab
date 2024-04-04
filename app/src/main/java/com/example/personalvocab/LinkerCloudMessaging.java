@@ -21,7 +21,7 @@ public class LinkerCloudMessaging extends FirebaseMessagingService {
 
     private void getFirebaseMessage(String title, String body) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify")
-                .setSmallIcon(R.drawable.notifications)
+                .setSmallIcon(R.drawable.baseline_notifications_none_24)
                 .setContentTitle("title")
                 .setContentText("body")
                 .setAutoCancel(true);

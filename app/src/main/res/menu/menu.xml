@@ -5,6 +5,7 @@
     tools:showIn = "navigation_view">
 
     <group
+        android:id="@+id/main"
         android:checkableBehavior="single">
 
         <item
@@ -27,16 +28,12 @@
             android:icon="@drawable/baseline_info_24"
             android:title="About Us"/>
     </group>
-    <item
-        android:title="">
-
-        <menu>
-            <item
-                android:id="@+id/nav_logout"
-                android:icon="@drawable/baseline_exit_to_app_24"
-                android:title="Logout"/>
-        </menu>
-
-    </item>
-
+    <group
+        android:id="@+id/auth"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/baseline_exit_to_app_24"
+            android:title="Logout"/>
+    </group>
 </menu>

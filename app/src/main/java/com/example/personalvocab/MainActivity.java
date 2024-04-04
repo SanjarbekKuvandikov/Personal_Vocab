@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -33,6 +34,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private FirestoreRecyclerAdapter wordAdapter;
     Boolean isAllFabsVisible;
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,10 +67,50 @@ public class MainActivity extends AppCompatActivity {
         //Drawer Layout
         DrawerLayout drawerLayout = findViewById(R.id.drawerlayout);
         findViewById(R.id.imageMenu).setOnClickListener((v -> {
-drawerLayout.openDrawer(GravityCompat.START);
+            drawerLayout.openDrawer(GravityCompat.START);
         }));
         //drawer layout
 
+
+        NavigationView navigationView = findViewById(R.id.design_navigation_view);
+        navigationView.setNavigationItemSelectedListener(item -> {
+
+            switch (item.getItemId()){
+                case R.id.nav_logout:{
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(MainActivity.this, Login.class));
+                    finish();
+                    break;
+                }
+                case R.id.nav_share:{
+                    Toast.makeText(this,"nav_share selected",Toast.LENGTH_SHORT).show();
+
+                    // Create sendIntent
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Personal Vocabulary");
+                    sendIntent.setType("text/plain");
+
+                    // Create shareIntent with chooser
+                    Intent shareIntent = Intent.createChooser(sendIntent, null);
+                    startActivity(shareIntent);
+                    break;
+                }
+                case R.id.nav_about:{
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/SanjarbekKuvandikov"));
+                    startActivity(intent);
+                }
+                default:{
+
+                }
+
+            }
+
+
+            drawerLayout.close();
+            item.setCheckable(false);
+            return true;
+        });
 
         mAddFab = findViewById(R.id.add_fab);
 
@@ -138,7 +182,7 @@ drawerLayout.openDrawer(GravityCompat.START);
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void getWordList(){
+    private void getWordList() {
         Query query = utility.getCollectionReferenceToWords().orderBy("timestamp", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<Word> response = new FirestoreRecyclerOptions.Builder<Word>()
@@ -159,14 +203,14 @@ drawerLayout.openDrawer(GravityCompat.START);
                     holder.ContentTextview.setText("");
                     holder.TimestampTextview.setText("");
                 }
-holder.itemView.setOnClickListener((v)->{
-    Intent intent = new Intent(MainActivity.this,WordDetails.class);
-    String docId = this.getSnapshots().getSnapshot(position).getId();
-    intent.putExtra("title",word.soz);
-    intent.putExtra("content",word.kontent);
-    intent.putExtra("docId",docId);
-startActivity(intent);
-});
+                holder.itemView.setOnClickListener((v) -> {
+                    Intent intent = new Intent(MainActivity.this, WordDetails.class);
+                    String docId = this.getSnapshots().getSnapshot(position).getId();
+                    intent.putExtra("title", word.soz);
+                    intent.putExtra("content", word.kontent);
+                    intent.putExtra("docId", docId);
+                    startActivity(intent);
+                });
 
             }
 
@@ -217,37 +261,10 @@ startActivity(intent);
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK){
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             wordAdapter.notifyDataSetChanged();
-            Toast.makeText(MainActivity.this,"So`zlar muaffaqiyatli qo`shildi.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "So`zlar muaffaqiyatli qo`shildi.", Toast.LENGTH_SHORT).show();
         }
-    }
-    //Menu
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.menu,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.nav_logout){
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(MainActivity.this,Login.class));
-            finish();
-        } else if (item.getItemId() == R.id.nav_share) {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_TEXT,"Personal Vocabulary");
-            if (intent.resolveActivity(getPackageManager()) != null){
-                startActivity(intent);
-            }
-        }
-
-        return super.onOptionsItemSelected(item);
-
     }
 }
 
