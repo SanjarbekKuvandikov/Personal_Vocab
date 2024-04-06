@@ -1,21 +1,29 @@
 package com.example.personalvocab;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -27,24 +35,29 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 346;
-
+    SearchView searchView;
+    TextView foremail;
 
     private Utility utility;
     private FloatingActionButton mAddFab, AddWordFab, mAddPersonFab;
@@ -54,15 +67,29 @@ public class MainActivity extends AppCompatActivity {
 
     private FirestoreRecyclerAdapter wordAdapter;
     Boolean isAllFabsVisible;
+    //
+    private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+        @Override
+        public void onActivityResult(Boolean o) {
+            if ((o)){
+                Toast.makeText(MainActivity.this,"Post notification permission granted",Toast.LENGTH_SHORT).show();
+            }
+        }
+    });
+    //
 
-    @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //firebase messaging
-
-        //firebase messaging
+        //emailread
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+        FirebaseApp.initializeApp(this);
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            activityResultLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
+    }
+        //emailread
 
         //Drawer Layout
         DrawerLayout drawerLayout = findViewById(R.id.drawerlayout);
@@ -70,43 +97,54 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.openDrawer(GravityCompat.START);
         }));
         //drawer layout
-
-
         NavigationView navigationView = findViewById(R.id.design_navigation_view);
+        View headerview = navigationView.getHeaderView(0);
+        foremail = (TextView) headerview.findViewById(R.id.email_text);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userEmail = String.valueOf(user.getEmail());
+        foremail.setText(userEmail);
+
+
         navigationView.setNavigationItemSelectedListener(item -> {
 
-            switch (item.getItemId()){
-                case R.id.nav_logout:{
-                    FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(MainActivity.this, Login.class));
-                    finish();
-                    break;
-                }
-                case R.id.nav_share:{
-                    Toast.makeText(this,"nav_share selected",Toast.LENGTH_SHORT).show();
-
-                    // Create sendIntent
-                    Intent sendIntent = new Intent();
-                    sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Personal Vocabulary");
-                    sendIntent.setType("text/plain");
-
-                    // Create shareIntent with chooser
-                    Intent shareIntent = Intent.createChooser(sendIntent, null);
-                    startActivity(shareIntent);
-                    break;
-                }
-                case R.id.nav_about:{
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/SanjarbekKuvandikov"));
-                    startActivity(intent);
-                }
-                default:{
-
-                }
-
+            if (item.getItemId() == R.id.nav_logout) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MainActivity.this, Login.class));
+                finish();
             }
+            if (item.getItemId() == R.id.nav_about) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("About us");
+                builder.setMessage("Author : Sanjarbek Kuvandikov" + "         " +
+                        "Version : 1.0.0");
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+            if (item.getItemId() == R.id.nav_howit) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/+JH64g-bYVyQ1YTcy    "));
+                startActivity(intent);
+            }
+            if (item.getItemId() == R.id.nav_home) {
 
+                startActivity(new Intent(MainActivity.this, MainActivity.class));
+            }
+            if (item.getItemId() == R.id.nav_share) {
+                // Create sendIntent
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Personal Vocabulary");
+                sendIntent.setType("text/plain");
+
+                // Create shareIntent with chooser
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+            }
             drawerLayout.close();
             item.setCheckable(false);
             return true;
@@ -164,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mAddPersonFab.setOnClickListener(
-                view -> Toast.makeText(MainActivity.this, "Folder Added", Toast.LENGTH_SHORT
+                view -> Toast.makeText(MainActivity.this, "Folder will be dded 1.2.0 version", Toast.LENGTH_SHORT
                 ).show());
 
         AddWordFab.setOnClickListener(
@@ -263,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             wordAdapter.notifyDataSetChanged();
-            Toast.makeText(MainActivity.this, "So`zlar muaffaqiyatli qo`shildi.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Words added successfully.", Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -100,7 +100,7 @@ if (isEdit){
                     finish();
                 } else {
 
-                    Toast.makeText(WordDetails.this, "So`zlarni qo`shishda xatolik!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WordDetails.this, "Error while adding words!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -113,11 +113,11 @@ void DeleteWordFromFirebas(){
         public void onComplete(@NonNull Task<Void> task) {
 
             if (task.isSuccessful()) {
-                Toast.makeText(WordDetails.this, "So`zlar o`chirilidi", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WordDetails.this, "Words deleted", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
 
-                Toast.makeText(WordDetails.this, "So`zlarni o`chirishda xatolik!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WordDetails.this, "Error while deleting words!", Toast.LENGTH_SHORT).show();
             }
         }
     });

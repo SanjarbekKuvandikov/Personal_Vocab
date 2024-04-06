@@ -14,9 +14,9 @@
             android:title="Home"/>
 
         <item
-            android:id="@+id/nav_darkmode"
-            android:icon="@drawable/moon"
-            android:title="Dark mode"/>
+            android:id="@+id/nav_howit"
+            android:icon="@drawable/baseline_question_mark_24"
+            android:title="How it works?"/>
 
         <item
             android:id="@+id/nav_share"

@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <LinearLayout
+        <Toolbar
             android:id="@+id/layoutToolBar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
@@ -39,114 +39,130 @@
                 android:textColor="@color/white"
                 android:textSize="32dp"
                 android:textStyle="bold" />
-        </LinearLayout>
+
+        </Toolbar>
+
+        <RelativeLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MainActivity"
+            tools:layout_editor_absoluteX="142dp"
+            tools:layout_editor_absoluteY="-137dp">
+
+            <TextView
+                android:id="@+id/allwords"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/search_btn"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="0dp"
+                android:text="All Words"
+                android:textColor="@color/levander"
+                android:textSize="36sp" />
+
+            <TextView
+                android:id="@+id/everywords"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/allwords"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="0dp"
+                android:text="Every words you wrote."
+                android:textColor="@color/levander"
+                android:textSize="24sp" />
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search here ....."
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="65dp"
+                app:iconifiedByDefault="false"
+                app:searchIcon="@drawable/baseline_search_24"
+                android:background="@drawable/red_rounded"
+                />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="end"
+                android:layout_marginEnd="50dp"
+                android:layout_marginBottom="50dp"
+                android:src="@drawable/baseline_add_24"
+                app:fabSize="normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_word_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/add_fab"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="50dp"
+                android:layout_marginBottom="10dp"
+                app:fabSize="normal"
+                app:layout_constraintBottom_toTopOf="@+id/add_fab"
+                app:layout_constraintEnd_toEndOf="@+id/add_fab"
+                app:layout_constraintStart_toStartOf="@+id/add_fab"
+                app:srcCompat="@drawable/baseline_create_24" />
+
+
+            <TextView
+                android:id="@+id/add_folder_action_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/add_word_action_text"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="45dp"
+                android:layout_toStartOf="@+id/add_fab"
+                android:text="Create folder"
+                app:layout_constraintBottom_toBottomOf="@+id/add_word_fab"
+                app:layout_constraintEnd_toStartOf="@+id/add_word_fab"
+                app:layout_constraintTop_toTopOf="@+id/add_word_fab" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_folder_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/add_word_fab"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="50dp"
+                android:layout_marginBottom="10dp"
+                app:fabSize="normal"
+                app:layout_constraintBottom_toTopOf="@+id/add_word_fab"
+                app:layout_constraintEnd_toEndOf="@+id/add_word_fab"
+                app:layout_constraintStart_toStartOf="@+id/add_word_fab"
+                app:srcCompat="@drawable/baseline_create_new_folder_24" />
+
+            <TextView
+                android:id="@+id/add_word_action_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="135dp"
+                android:layout_toStartOf="@+id/add_word_fab"
+                android:text="Add Word"
+                app:layout_constraintBottom_toBottomOf="@+id/add_folder_fab"
+                app:layout_constraintEnd_toStartOf="@+id/add_folder_fab"
+                app:layout_constraintTop_toTopOf="@+id/add_word_fab" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/everywords" />
+
+        </RelativeLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <RelativeLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="80dp"
-            android:text="All Words"
-            android:textColor="@color/levander"
-            android:textSize="36sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="130dp"
-            android:id="@+id/everywords"
-            android:text="Every words you wrote."
-            android:textColor="@color/levander"
-            android:textSize="24sp" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="end"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="50dp"
-            android:src="@drawable/baseline_add_24"
-            app:fabSize="normal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_word_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/add_fab"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="10dp"
-            app:fabSize="normal"
-            app:layout_constraintBottom_toTopOf="@+id/add_fab"
-            app:layout_constraintEnd_toEndOf="@+id/add_fab"
-            app:layout_constraintStart_toStartOf="@+id/add_fab"
-            app:srcCompat="@drawable/baseline_create_24" />
-
-
-        <TextView
-            android:id="@+id/add_folder_action_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/add_word_action_text"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="45dp"
-            android:layout_toStartOf="@+id/add_fab"
-            android:text="Create folder"
-            app:layout_constraintBottom_toBottomOf="@+id/add_word_fab"
-            app:layout_constraintEnd_toStartOf="@+id/add_word_fab"
-            app:layout_constraintTop_toTopOf="@+id/add_word_fab" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_folder_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/add_word_fab"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="10dp"
-            app:fabSize="normal"
-            app:layout_constraintBottom_toTopOf="@+id/add_word_fab"
-            app:layout_constraintEnd_toEndOf="@+id/add_word_fab"
-            app:layout_constraintStart_toStartOf="@+id/add_word_fab"
-            app:srcCompat="@drawable/baseline_create_new_folder_24" />
-
-        <TextView
-            android:id="@+id/add_word_action_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="135dp"
-            android:layout_toStartOf="@+id/add_word_fab"
-            android:text="Add Word"
-            app:layout_constraintBottom_toBottomOf="@+id/add_folder_fab"
-            app:layout_constraintEnd_toStartOf="@+id/add_folder_fab"
-            app:layout_constraintTop_toTopOf="@+id/add_word_fab" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/everywords"
-            android:id="@+id/recycler_view"
-            />
-
-    </RelativeLayout>
     <com.google.android.material.navigation.NavigationView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
