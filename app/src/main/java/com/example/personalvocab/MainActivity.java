@@ -56,7 +56,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 346;
-    SearchView searchView;
     TextView foremail;
 
     private Utility utility;
