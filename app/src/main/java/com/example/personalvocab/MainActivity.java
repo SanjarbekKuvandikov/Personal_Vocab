@@ -229,6 +229,13 @@ public class MainActivity extends AppCompatActivity {
 
         wordAdapter = new FirestoreRecyclerAdapter<Word, WordViewHolder>(response) {
             @Override
+            public void onDataChanged() {
+                super.onDataChanged();
+                notifyDataSetChanged();
+                Log.d("TAG", "onDataChanged: ");
+            }
+
+            @Override
             public void onBindViewHolder(WordViewHolder holder, int position, Word word) {
                 if (word != null) {
                     holder.TitleTextview.setText(word.soz);
@@ -266,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        wordAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(wordAdapter);
     }
 
@@ -286,22 +292,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        wordAdapter.startListening();
+        if (wordAdapter != null) {
+            wordAdapter.startListening();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        wordAdapter.stopListening();
+        if (wordAdapter != null) {
+            wordAdapter.stopListening();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-            wordAdapter.notifyDataSetChanged();
-            Toast.makeText(MainActivity.this, "Words added successfully.", Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(MainActivity.this, "Words added successfully.", Toast.LENGTH_SHORT).show();
     }
 }
 
