@@ -1,24 +1,8 @@
 package com.example.personalvocab;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.view.GravityCompat;
-import androidx.core.view.MenuItemCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,33 +10,35 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 346;
@@ -63,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView addAlarmActionText, addPersonActionText;
     private RecyclerView recyclerView;
     private ImageButton menubtn;
+
+    private SearchView mSearchBtn;
 
     private FirestoreRecyclerAdapter wordAdapter;
     Boolean isAllFabsVisible;
@@ -150,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mAddFab = findViewById(R.id.add_fab);
+        mSearchBtn = findViewById(R.id.search_btn);
 
         AddWordFab = findViewById(R.id.add_word_fab);
         mAddPersonFab = findViewById(R.id.add_folder_fab);
@@ -207,6 +196,33 @@ public class MainActivity extends AppCompatActivity {
         AddWordFab.setOnClickListener(
                 view -> Toast.makeText(MainActivity.this, "Word Added", Toast.LENGTH_SHORT
                 ).show());
+
+        mSearchBtn.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+//                Toast.makeText(MainActivity.this, "SEARCH " + query, Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+//                Toast.makeText(MainActivity.this, "SEARCH " + newText, Toast.LENGTH_LONG).show();
+                Query firebaseQuery;
+                if (!newText.isEmpty()){
+                    firebaseQuery = utility.getCollectionReferenceToWords().whereGreaterThanOrEqualTo("soz", newText).whereLessThanOrEqualTo("soz",newText+"z").orderBy("timestamp", Query.Direction.DESCENDING);
+                }else {
+                    firebaseQuery = utility.getCollectionReferenceToWords().orderBy("timestamp", Query.Direction.DESCENDING);
+                }
+
+                FirestoreRecyclerOptions<Word> newOptions = new FirestoreRecyclerOptions.Builder<Word>()
+                        .setQuery(firebaseQuery, Word.class)
+                        .build();
+
+                wordAdapter.updateOptions(newOptions);
+                return false;
+            }
+        });
 
         setupRecyclerView();
         getWordList();
