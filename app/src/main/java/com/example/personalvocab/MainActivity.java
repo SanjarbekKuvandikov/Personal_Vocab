@@ -287,11 +287,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(FirebaseFirestoreException e) {
-
-                if (e.getCode() == INVALID_ARGUMENT || e.getCode() == FAILED_PRECONDITION) return;
-
-                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT
-                ).show();
+                Log.d("TAG", "onError: " + e.getMessage());
             }
         };
 
