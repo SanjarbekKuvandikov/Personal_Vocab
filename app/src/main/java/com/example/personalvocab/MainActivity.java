@@ -1,5 +1,6 @@
 package com.example.personalvocab;
 
+import static com.google.firebase.firestore.FirebaseFirestoreException.Code.FAILED_PRECONDITION;
 import static com.google.firebase.firestore.FirebaseFirestoreException.Code.INVALID_ARGUMENT;
 
 import android.Manifest;
@@ -287,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onError(FirebaseFirestoreException e) {
 
-                if (e.getCode() == INVALID_ARGUMENT) return;
+                if (e.getCode() == INVALID_ARGUMENT || e.getCode() == FAILED_PRECONDITION) return;
 
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT
                 ).show();
