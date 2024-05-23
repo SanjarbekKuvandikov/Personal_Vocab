@@ -1,5 +1,7 @@
 package com.example.personalvocab;
 
+import static com.google.firebase.firestore.FirebaseFirestoreException.Code.INVALID_ARGUMENT;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -284,6 +286,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(FirebaseFirestoreException e) {
+
+                if (e.getCode() == INVALID_ARGUMENT) return;
+
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT
                 ).show();
             }
